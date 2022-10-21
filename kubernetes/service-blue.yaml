@@ -37,7 +37,8 @@ metadata:
     kubernetes.io/ingress.class: azure/application-gateway
 spec:
   rules:
-  - http:
+  - host: blue.sample.com
+    http:
       paths:
       - path: /
         backend:
