@@ -20,14 +20,14 @@ spec:
   replicas: 3
   selector:
       matchLabels:
-        app: nginx
+        app: nginx-blue
   template:
     metadata:
       labels:
-        app: nginx
+        app: nginx-blue
     spec:
       containers: 
-        - name: nginx
+        - name: nginx-blue
           image: pocb3.azurecr.io/blue-nginx:1
           ports:
             - name: http

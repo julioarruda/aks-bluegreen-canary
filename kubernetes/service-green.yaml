@@ -12,30 +12,37 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: nginx-deployment
+apiVersion: v1
+kind: Service
+metadata: 
+  name: nginx-green
+  labels: 
+    app: nginx-green
 spec:
-  replicas: 3
-  selector:
-      matchLabels:
-        app: nginx-green
-  template:
-    metadata:
-      labels:
-        app: nginx-green
-    spec:
-      containers: 
-        - name: nginx-green
-          image: pocb3.azurecr.io/green-nginx:1
-          ports:
-            - name: http
-              containerPort: 80
-          resources:
-            requests:
-              cpu: 200m
-              memory: 200Mi
-            limits:
-              cpu: 500m
-              memory: 500Mi
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80
+  selector: 
+    app: nginx-green
+ # type: LoadBalancer
+
+---
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: nginx-green
+  annotations:
+    kubernetes.io/ingress.class: azure/application-gateway
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /
+        backend:
+          service:
+            name: nginx-green
+            port:
+              number: 80
+        pathType: Exact  
