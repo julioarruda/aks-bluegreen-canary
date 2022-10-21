@@ -46,4 +46,4 @@ spec:
             name: nginx-green
             port:
               number: 80
-        pathType: Exact  
+        pathType: Prefix  
