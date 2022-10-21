@@ -34,7 +34,8 @@ jobs:
           password: ${{ secrets.REGISTRY_PASSWORD }}
 
       - run: |
-          docker build ./nginx-html/Dockerfile -t pocb3.azurecr.io/k8sdemo:${{ github.sha }}
+          cd /nginx-html/Dockerfile
+          docker build . -t pocb3.azurecr.io/k8sdemo:${{ github.sha }}
           docker push pocb3.azurecr.io/k8sdemo:${{ github.sha }}
 
       # This action can be used to set cluster context before other actions like azure/k8s-deploy, azure/k8s-create-secret or any kubectl commands (in script) can be run subsequently in the workflow.
