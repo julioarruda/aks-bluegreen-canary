@@ -47,7 +47,7 @@ jobs:
             pocb3.azurecr.io/green-nginx:1
           strategy: blue-green
           traffic-split-method: pod
-          route-method: service
+          route-method: ingress
           action: deploy  #deploy is the default; we will later use this to promote/reject
 
   approveapp:
@@ -82,7 +82,7 @@ jobs:
             pocb3.azurecr.io/green-nginx:1
           strategy: blue-green
           traffic-split-method: pod
-          route-method: service
+          route-method: ingress
           action: promote  #deploy is the default; we will later use this to promote/reject
 
       - name: Reject App
@@ -97,6 +97,6 @@ jobs:
             pocb3.azurecr.io/green-nginx:1
           strategy: blue-green
           traffic-split-method: pod
-          route-method: service
+          route-method: ingress
           action: reject  #deploy is the default; we will later use this to promote/reject
           
