@@ -81,20 +81,31 @@ jobs:
           cluster-name: ${{ env.AKS_CLUSTER_NAME }}
           resource-group: ${{ env.RESOURCE_GROUP }}
 
-      - name: Promote App
-        uses: azure/k8s-deploy@v1.3
+      # - name: Promote App
+      #   uses: azure/k8s-deploy@v1.3
+      #   if: ${{ success() }}
+      #   with:
+      #     namespace: default
+      #     manifests: |
+      #       ./kubernetes/service.yaml
+      #       ./kubernetes/green-deploy.yaml
+      #     images: |
+      #       pocb3.azurecr.io/green-nginx:1
+      #     strategy: blue-green
+      #     traffic-split-method: pod
+      #     route-method: ingress
+      #     action: promote  #deploy is the default; we will later use this to promote/reject
+
+      - uses: Azure/k8s-deploy@v3.1
         if: ${{ success() }}
         with:
-          namespace: default
+          images: 'pocb3.azurecr.io/green-nginx:1'
           manifests: |
-            ./kubernetes/service.yaml
-            ./kubernetes/green-deploy.yaml
-          images: |
-            pocb3.azurecr.io/green-nginx:1
+              ./kubernetes/service.yaml
+              ./kubernetes/blue-deploy.yaml
           strategy: blue-green
-          traffic-split-method: pod
-          route-method: ingress
-          action: promote  #deploy is the default; we will later use this to promote/reject
+          action: promote
+          route-method: ingress # substitute reject if you want to reject
 
       - name: Reject App
         uses: azure/k8s-deploy@v1.3
