@@ -34,7 +34,7 @@ jobs:
           password: ${{ secrets.REGISTRY_PASSWORD }}
 
       - run: |
-          cd /nginx-html/
+          cd ./nginx-html/
           docker build . -t pocb3.azurecr.io/k8sdemo:${{ github.sha }}
           docker push pocb3.azurecr.io/k8sdemo:${{ github.sha }}
 
