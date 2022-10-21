@@ -25,4 +25,24 @@ spec:
       targetPort: 80
   selector: 
     app: nginx
-  type: LoadBalancer
+ # type: LoadBalancer
+
+---
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: aspnetapp
+  annotations:
+    kubernetes.io/ingress.class: azure/application-gateway
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /
+        backend:
+          service:
+            name: nginx
+            port:
+              number: 80
+        pathType: Exact  
