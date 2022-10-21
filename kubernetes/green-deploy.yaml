@@ -20,14 +20,14 @@ spec:
   replicas: 3
   selector:
       matchLabels:
-        app: nginx-green
+        app: nginx
   template:
     metadata:
       labels:
-        app: nginx-green
+        app: nginx
     spec:
       containers: 
-        - name: nginx-green
+        - name: nginx
           image: pocb3.azurecr.io/green-nginx:1
           ports:
             - name: http

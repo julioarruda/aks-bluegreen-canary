@@ -41,7 +41,7 @@ jobs:
         with:
           namespace: default
           manifests: |
-            ./kubernetes/service-blue.yaml
+            ./kubernetes/service.yaml
             ./kubernetes/blue-deploy.yaml
           images: |
             pocb3.azurecr.io/green-nginx:1
@@ -76,7 +76,7 @@ jobs:
         with:
           namespace: default
           manifests: |
-            ./kubernetes/service-green.yaml
+            ./kubernetes/service.yaml
             ./kubernetes/green-deploy.yaml
           images: |
             pocb3.azurecr.io/green-nginx:1
@@ -91,7 +91,7 @@ jobs:
         with:
           namespace: default
           manifests: |
-            ./kubernetes/service-blue.yaml
+            ./kubernetes/service.yaml
             ./kubernetes/blue-deploy.yaml
           images: |
             pocb3.azurecr.io/green-nginx:1
