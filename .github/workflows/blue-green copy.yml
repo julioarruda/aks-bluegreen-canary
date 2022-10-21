@@ -27,6 +27,16 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
 
+      - uses: Azure/docker-login@v1
+        with:
+          login-server: pocb3.azurecr.io
+          username: ${{ secrets.REGISTRY_USERNAME }}
+          password: ${{ secrets.REGISTRY_PASSWORD }}
+
+      - run: |
+          docker build ./nginx-html/Dockerfile -t pocb3.azurecr.io/k8sdemo:${{ github.sha }}
+          docker push pocb3.azurecr.io/k8sdemo:${{ github.sha }}
+
       # This action can be used to set cluster context before other actions like azure/k8s-deploy, azure/k8s-create-secret or any kubectl commands (in script) can be run subsequently in the workflow.
       - name: Set cluster context
         uses: azure/aks-set-context@v1
@@ -35,24 +45,9 @@ jobs:
           cluster-name: ${{ env.AKS_CLUSTER_NAME }}
           resource-group: ${{ env.RESOURCE_GROUP }}
       
-      # # Runs a set of commands using the runners shell
-      # - name: Deploy app
-      #   uses: azure/k8s-deploy@v1.3
-      #   with:
-      #     namespace: default
-      #     manifests: |
-      #       ./kubernetes/service.yaml
-      #       ./kubernetes/blue-deploy.yaml
-      #     images: |
-      #       pocb3.azurecr.io/green-nginx:1
-      #     strategy: blue-green
-      #     traffic-split-method: pod
-      #     route-method: ingress
-      #     action: deploy  #deploy is the default; we will later use this to promote/reject
-
       - uses: Azure/k8s-deploy@v3.1
         with:
-          images: 'pocb3.azurecr.io/green-nginx:1'
+          images: 'pocb3.azurecr.io/k8sdemo:${{ github.sha }}'
           manifests: |
               ./kubernetes/service.yaml
               ./kubernetes/blue-deploy.yaml
@@ -81,44 +76,25 @@ jobs:
           cluster-name: ${{ env.AKS_CLUSTER_NAME }}
           resource-group: ${{ env.RESOURCE_GROUP }}
 
-      # - name: Promote App
-      #   uses: azure/k8s-deploy@v1.3
-      #   if: ${{ success() }}
-      #   with:
-      #     namespace: default
-      #     manifests: |
-      #       ./kubernetes/service.yaml
-      #       ./kubernetes/green-deploy.yaml
-      #     images: |
-      #       pocb3.azurecr.io/green-nginx:1
-      #     strategy: blue-green
-      #     traffic-split-method: pod
-      #     route-method: ingress
-      #     action: promote  #deploy is the default; we will later use this to promote/reject
-
       - uses: Azure/k8s-deploy@v3.1
         if: ${{ success() }}
         with:
-          images: 'pocb3.azurecr.io/green-nginx:1'
+          images: 'pocb3.azurecr.io/k8sdemo:${{ github.sha }}'
           manifests: |
               ./kubernetes/service.yaml
               ./kubernetes/blue-deploy.yaml
           strategy: blue-green
           action: promote
-          route-method: ingress # substitute reject if you want to reject
+          route-method: ingress 
 
-      - name: Reject App
-        uses: azure/k8s-deploy@v1.3
+      - uses: Azure/k8s-deploy@v3.1
         if: ${{ failure() }}
         with:
-          namespace: default
+          images: 'pocb3.azurecr.io/k8sdemo:${{ github.sha }}'
           manifests: |
-            ./kubernetes/service.yaml
-            ./kubernetes/blue-deploy.yaml
-          images: |
-            pocb3.azurecr.io/green-nginx:1
+              ./kubernetes/service.yaml
+              ./kubernetes/blue-deploy.yaml
           strategy: blue-green
-          traffic-split-method: pod
-          route-method: ingress
-          action: reject  #deploy is the default; we will later use this to promote/reject
+          action: reject
+          route-method: ingress 
           
