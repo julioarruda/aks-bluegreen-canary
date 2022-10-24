@@ -90,7 +90,7 @@ jobs:
             ./kubernetes/service-all.yaml
             ./kubernetes/blue-deploy.yaml
           images: |
-            pocregostryb3.azurecr.io/green-nginx:1
+            pocregostryb3.azurecr.io/blue-nginx:1
           strategy: blue-green
           traffic-split-method: pod
           route-method: ingress
