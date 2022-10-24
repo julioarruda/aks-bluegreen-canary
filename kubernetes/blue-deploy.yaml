@@ -28,7 +28,7 @@ spec:
     spec:
       containers: 
         - name: nginx
-          image: pocb3.azurecr.io/blue-nginx:1
+          image: pocregostryb3.azurecr.io/blue-nginx:1
           ports:
             - name: http
               containerPort: 80
